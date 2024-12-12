@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-clients-deployment
+  labels:
+    app: ms-clients-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-clients-deployment
+  template:
+    metadata:
+      labels:
+        app: ms-clients-deployment
+    spec:
+      containers:
+        - name: ms-clients
+          image: felipeb2001/ms-clients
+          ports:
+            - containerPort: 8091
+          env:
+            - name: SERVER_PORT
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_CLIENTS
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_CLIENTS
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_NAME_CLIENTS
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_CLIENTS
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_CLIENTS

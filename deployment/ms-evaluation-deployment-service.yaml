@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-evaluation-deployment
+  labels:
+    app: ms-evaluation-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-evaluation-deployment
+  template:
+    metadata:
+      labels:
+        app: ms-evaluation-deployment
+    spec:
+      containers:
+        - name: ms-evaluation
+          image: felipeb2001/ms-evaluation
+          ports:
+            - containerPort: 8092
+          env:
+            - name: SERVER_PORT
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_EVALUATION
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_EVALUATION
+            - name: DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_NAME_EVALUATION
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_CLIENTS
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_CLIENTS
